@@ -1,4 +1,6 @@
 const express = require("express");
+const bcrypt = require("bcrypt");
+
 const { auth } = require("../middleware/auth.middleware");
 const { User } = require("../model/User.model");
 
@@ -39,6 +41,15 @@ userRouter.get("/users", auth, async (req, res) => {
 
 userRouter.get("/users/:id", auth, async (req, res) => {
   try {
+    const { role } = req.user;
+
+    if (role !== "admin") {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized: Only Admin can access users details",
+      });
+    }
+
     const id = req.params.id;
 
     const existingUser = await User.findById(id);
@@ -53,6 +64,54 @@ userRouter.get("/users/:id", auth, async (req, res) => {
       success: true,
       message: "User retrieved successfully",
       data: existingUser,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Add user
+
+userRouter.post("/users", auth, async (req, res) => {
+  try {
+    const { role } = req.user;
+
+    const { name, email, password } = req.body;
+
+    if (role !== "admin") {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized: Only Admin can add users",
+      });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: "User with this email already exists",
+      });
+    }
+
+    const hashPassword = await bcrypt.hash(password, 10);
+
+    const user = new User({
+      name,
+      email,
+      password: hashPassword,
+    });
+
+    await user.save();
+
+    res.status(201).json({
+      success: true,
+      message: "User created successfully",
+      data: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
