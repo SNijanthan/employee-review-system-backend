@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const { validateSignUpData } = require("../utils/inputValidation");
 const { User } = require("../model/User.model");
+const { auth } = require("../middleware/auth.middleware");
 
 require("dotenv").config();
 
@@ -86,6 +87,19 @@ authRouter.post("/login", async (req, res) => {
           user,
         });
     }
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// User logout
+
+authRouter.post("/logout", auth, async (req, res) => {
+  try {
+    res
+      .cookie("TOKEN", null, { expires: new Date(0), httpOnly: true })
+      .status(200)
+      .json({ success: true, message: "Logged out succesfully..!" });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
