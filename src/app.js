@@ -1,4 +1,5 @@
 const express = require("express");
+const { connectToDatabase } = require("./config/database");
 
 const app = express();
 
@@ -10,10 +11,17 @@ app.get("/", (req, res) => {
     .json({ status: true, message: "Hello all, Welcome to this Web page...!" });
 });
 
-app.listen(port, (err) => {
-  if (err) {
+connectToDatabase()
+  .then(() => {
+    console.log(`Connected to database successfully..!`);
+    app.listen(port, (err) => {
+      if (err) {
+        console.log(err.message);
+      } else {
+        console.log(`Connected to Port ${port}..!`);
+      }
+    });
+  })
+  .catch((err) => {
     console.log(err.message);
-  } else {
-    console.log(`Connected to Port ${port}..!`);
-  }
-});
+  });
