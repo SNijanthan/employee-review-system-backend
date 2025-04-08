@@ -59,7 +59,7 @@ userRouter.get("/users/:id", auth, async (req, res) => {
   }
 });
 
-// Promote from employee to admin
+// update user from employee to admin
 
 userRouter.patch("/users/:id/promote", auth, async (req, res) => {
   try {
@@ -101,6 +101,38 @@ userRouter.patch("/users/:id/promote", auth, async (req, res) => {
       success: true,
       message: `${existingUser.name} promoted to Admin`,
       data: updateUser,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Delete user
+
+userRouter.delete("/users/:id", auth, async (req, res) => {
+  try {
+    const { role } = req.user;
+
+    if (role !== "admin") {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized: Only Admin have access to delete user",
+      });
+    }
+
+    const id = req.params.id;
+
+    const deletedUser = await User.findByIdAndDelete(id);
+
+    if (!deletedUser) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found..!" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `User ${deletedUser.email} deleted successfully.`,
     });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
