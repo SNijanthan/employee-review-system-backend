@@ -4,6 +4,8 @@ const { User } = require("../model/User.model");
 
 const userRouter = express.Router();
 
+// Get all users
+
 userRouter.get("/users", auth, async (req, res) => {
   try {
     const { role } = req.user;
@@ -27,6 +29,78 @@ userRouter.get("/users", auth, async (req, res) => {
       success: true,
       message: "Data retrieved successfully..!",
       users,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Get a single user
+
+userRouter.get("/users/:id", auth, async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const existingUser = await User.findById(id);
+
+    if (!existingUser) {
+      return res
+        .status(409)
+        .json({ success: false, message: "User does not exist..!" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "User retrieved successfully",
+      data: existingUser,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// Promote from employee to admin
+
+userRouter.patch("/users/:id/promote", auth, async (req, res) => {
+  try {
+    const { role } = req.user;
+
+    if (role !== "admin") {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized: Only Admin can promote users",
+      });
+    }
+
+    const id = req.params.id;
+
+    const existingUser = await User.findById(id);
+
+    if (!existingUser) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User does not exist..!" });
+    }
+
+    if (existingUser.role === "admin") {
+      return res.status(200).json({
+        success: true,
+        message: `${existingUser.name} is already an Admin.`,
+      });
+    }
+
+    const updateUser = await User.findByIdAndUpdate(
+      id,
+      { role: "admin" },
+      { runValidators: true, new: true }
+    );
+
+    await updateUser.save();
+
+    res.status(200).json({
+      success: true,
+      message: `${existingUser.name} promoted to Admin`,
+      data: updateUser,
     });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });

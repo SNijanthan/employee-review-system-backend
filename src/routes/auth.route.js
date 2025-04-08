@@ -16,7 +16,7 @@ authRouter.post("/signup", async (req, res) => {
   try {
     validateSignUpData(req);
 
-    const { email, password, role } = req.body;
+    const { name, email, password, role } = req.body;
 
     // Checking user already exists in DB
 
@@ -34,7 +34,7 @@ authRouter.post("/signup", async (req, res) => {
 
     // User added into DB
 
-    const user = new User({ email, password: hashPassword, role });
+    const user = new User({ name, email, password: hashPassword, role });
 
     await user.save();
 

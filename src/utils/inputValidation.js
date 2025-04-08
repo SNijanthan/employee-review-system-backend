@@ -1,7 +1,11 @@
 const validator = require("validator");
 
 const validateSignUpData = (req) => {
-  const { email, password, role } = req.body;
+  const { name, email, password, role } = req.body;
+
+  if (!name?.trim()) {
+    throw new Error("Name field cannot be empty");
+  }
 
   if (!email?.trim()) {
     throw new Error("Email field cannot be empty");
