@@ -31,8 +31,6 @@ const auth = async (req, res, next) => {
   } catch (error) {
     res.status(400).send("ERROR: " + error.message);
   }
-
-  next();
 };
 
 module.exports = { auth };

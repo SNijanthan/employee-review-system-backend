@@ -2,7 +2,7 @@
 
 ## 📌 Project Overview
 
-A **Node.js + Express** backend for a **Employee Review System**
+The **Employee Review System** is a role-based feedback management application built using the **MERN stack**. It allows organizations to manage employees, assign performance reviews, and collect peer feedback — all within a secure and structured system.
 
 ## 🛠️ Tech Stack
 
