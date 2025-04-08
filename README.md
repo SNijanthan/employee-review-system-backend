@@ -38,6 +38,7 @@ The **Employee Review System** is a role-based feedback management application b
 ### User Router
 
 - `PATCH /users/:id/promote` - Promote to admin
+- `POST /users` - Create new user
 - `GET /users` - Get all users
 - `GET /users/:id` - Get a single user
 - `PUT /users/:id` - Update user
