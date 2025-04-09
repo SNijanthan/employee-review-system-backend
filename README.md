@@ -43,3 +43,10 @@ The **Employee Review System** is a role-based feedback management application b
 - `GET /users/:id` - Get a single user
 - `PUT /users/:id` - Update user
 - `DELETE /users/:id` - Delete user
+
+### Feedback Router
+
+- `POST /review/:reviewerId/:reviewedId` - Assign a reviewer to give feedback on another employee (Admin only)
+- `GET /my-feedbacks` - Get all feedbacks assigned to the logged-in employee (where comment is not yet submitted)
+- `PATCH /feedback/:id` - Submit feedback as the assigned reviewer
+- `GET /feedbacks/received` - View feedbacks received by the logged-in employee

@@ -4,6 +4,7 @@ const cookie_parser = require("cookie-parser");
 const { connectToDatabase } = require("./config/database");
 const { authRouter } = require("./routes/auth.route");
 const { userRouter } = require("./routes/user.route");
+const { feedbackRouter } = require("./routes/feedback.router");
 
 const app = express();
 
@@ -14,7 +15,7 @@ app.use(cookie_parser());
 
 app.use("/", authRouter);
 app.use("/", userRouter);
-app.use('/', )
+app.use("/", feedbackRouter);
 
 connectToDatabase()
   .then(() => {
