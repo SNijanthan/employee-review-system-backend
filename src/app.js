@@ -3,8 +3,6 @@ const cookie_parser = require("cookie-parser");
 
 const { connectToDatabase } = require("./config/database");
 const { authRouter } = require("./routes/auth.route");
-const { reviewRouter } = require("./routes/review.route");
-const { performanceRouter } = require("./routes/performance.route");
 const { userRouter } = require("./routes/user.route");
 
 const app = express();
@@ -15,8 +13,6 @@ app.use(express.json());
 app.use(cookie_parser());
 
 app.use("/", authRouter);
-app.use("/", reviewRouter);
-app.use("/", performanceRouter);
 app.use("/", userRouter);
 
 connectToDatabase()
