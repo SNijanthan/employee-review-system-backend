@@ -40,7 +40,7 @@ authRouter.post("/signup", async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Signup completed successfully..!",
+      message: "Signup completed successfully.",
       user,
     });
   } catch (error) {
@@ -57,9 +57,10 @@ authRouter.post("/login", async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not exists..." });
+      return res.status(404).json({
+        success: false,
+        message: "Incorrect credentials. Please try again.",
+      });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -100,6 +101,23 @@ authRouter.post("/logout", auth, async (req, res) => {
       .cookie("TOKEN", null, { expires: new Date(0), httpOnly: true })
       .status(200)
       .json({ success: true, message: "Logged out succesfully..!" });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// User profile
+
+authRouter.get("/user", auth, async (req, res) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Session expired..! Please login",
+      });
+    }
+    res.status(200).json({ user });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
