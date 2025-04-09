@@ -14,6 +14,7 @@ app.use(cookie_parser());
 
 app.use("/", authRouter);
 app.use("/", userRouter);
+app.use('/', )
 
 connectToDatabase()
   .then(() => {
