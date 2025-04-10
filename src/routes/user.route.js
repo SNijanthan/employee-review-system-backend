@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 
 const { auth } = require("../middleware/auth.middleware");
 const { User } = require("../model/User.model");
+const { validateSignUpData } = require("../utils/inputValidation");
 
 const userRouter = express.Router();
 
@@ -77,6 +78,8 @@ userRouter.post("/users", auth, async (req, res) => {
     const { role } = req.user;
 
     const { name, email, password } = req.body;
+
+    validateSignUpData(req);
 
     if (role !== "admin") {
       return res.status(401).json({
