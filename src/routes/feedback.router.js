@@ -11,7 +11,7 @@ feedbackRouter.post(
   auth,
   async (req, res) => {
     try {
-      const { role, _id } = req.user;
+      const { role, _id: assignedBy } = req.user;
 
       if (role !== "admin") {
         return res.status(401).json({
@@ -25,10 +25,17 @@ feedbackRouter.post(
       const reviewer = await User.findById(reviewerId);
       const reviewed = await User.findById(reviewedId);
 
+      if (reviewer._id === reviewed._id) {
+        return res.status(401).json({
+          success: false,
+          message: "Permission denied!. Cannot assign yourself",
+        });
+      }
+
       if (!reviewer || !reviewed) {
         return res.status(404).json({
           success: false,
-          message: "Admins cannot be assigned or reviewed",
+          message: "One or both users not found.",
         });
       }
 
@@ -53,7 +60,7 @@ feedbackRouter.post(
       const newFeedback = new Feedback({
         reviewerId,
         reviewedId,
-        assignedBy: _id,
+        assignedBy,
       });
 
       await newFeedback.save();

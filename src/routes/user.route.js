@@ -194,7 +194,7 @@ userRouter.delete("/users/:id", auth, async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: `User ${deletedUser.email} deleted successfully.`,
+      message: `User ${deletedUser.name} deleted successfully.`,
     });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
