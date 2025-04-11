@@ -79,6 +79,8 @@ authRouter.post("/login", async (req, res) => {
       res
         .cookie("TOKEN", token, {
           httpOnly: true,
+          secure: process.env.NODE_ENV === "production", // important for https
+          sameSite: "None", // required for cross-site cookies
           expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
         })
         .status(200)
@@ -98,7 +100,12 @@ authRouter.post("/login", async (req, res) => {
 authRouter.post("/logout", auth, async (req, res) => {
   try {
     res
-      .cookie("TOKEN", null, { expires: new Date(0), httpOnly: true })
+      .cookie("TOKEN", null, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "None",
+        expires: new Date(0),
+      })
       .status(200)
       .json({ success: true, message: "Logged out succesfully..!" });
   } catch (error) {

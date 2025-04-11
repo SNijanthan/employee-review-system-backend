@@ -14,7 +14,23 @@ const port = 7777;
 app.use(express.json());
 app.use(cookie_parser());
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true })); // Whitelisting domain name
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://employee-review-system-frontend.vercel.app",
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 
 app.use("/", authRouter);
 app.use("/", userRouter);
